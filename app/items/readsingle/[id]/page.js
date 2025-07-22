@@ -1,35 +1,32 @@
-//TODO:アイテムを一つだけ教示する方法を考える
-
-// "use client"
-// import { useState, useEffect} from "react"
 import { createClient } from "../../../utils/supabase/client"
 // import Image from "next/image"
 // import Link from "next/link"
 
-// export async function generateMetadata(context){
-//     const params = await context.params
-//     const singleItem = await getSingleItem(params.id)
-//     return {
-//         title: singleItem.title,
-//         description: singleItem.description
-//     }
-// }
-
-const getSingleItem = async() => {
-
-    // useEffect(() => {
-    //     fetchUsers(id)
-    // }, [])
-
-    // function fetchUsers(id) {
-        const supabase = createClient()
-        const {data} =await supabase.from("item_per_user").select("*")
-        return data
-    // }
+export async function generateMetadata(context){
+    const params = await context.params
+    const singleItemArray = await getSingleItem(params.id)
+    const singleItem = singleItemArray[0]
+    return {
+        title: singleItem.title,
+        description: singleItem.description
+    }
 }
 
-const ReadSingleItem = () => {
-    const singleItem = getSingleItem()
+const getSingleItem = async(id) => {
+        const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+        const { data } = await supabase
+            .from("all_items")
+            .select()
+            .eq("id", `${id}`)
+        return data
+}
+
+//TODO:画像を表示させる、編集ページ・削除ページへのリンクを作る
+
+const ReadSingleItem = async(context) => {
+    const params = await context.params
+    const singleItemArray = await getSingleItem(params.id)
+    const singleItem = singleItemArray[0]
     return (
         <div className="grid-container-si">
             {/* <div>
