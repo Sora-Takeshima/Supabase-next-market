@@ -3,6 +3,7 @@
 import { useState, useEffect} from "react"
 import { createClient } from "./utils/supabase/client"
 import Link from "next/link"
+import Image from "next/image"
 
 const getAllItems = () => {
   const [items, setItems] = useState([])
@@ -19,15 +20,13 @@ const getAllItems = () => {
   return items
 }
 
-//TODO:画像を表示させる
-
 const ReadAllItems = () => {
   const allItems= getAllItems()
   return (
     <div className="grid-container-in">
       {allItems.map(item =>
         <Link href={`/items/readsingle/${item.id}`} key={item.id}>
-        {/* <Image src={item.image} width={750} height={500} alt="item-image" priority/> */}
+        <Image src={item.image} width={750} height={500} alt="item-image" priority/>
           <div>
             <h2>¥{item.price}</h2>
             <h3>{item.title}</h3>
