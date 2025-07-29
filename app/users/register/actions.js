@@ -8,9 +8,13 @@ export async function register(formData) {
     const supabase = await createClient()
 
     const data = {
-        name: formData.get('name'),
         email: formData.get('email'),
-        password: formData.get('password')
+        password: formData.get('password'),
+        options: {
+            data: {
+                full_name: formData.get('name')
+            }
+        }
     }
 
     const { error } = await supabase.auth.signUp(data)
@@ -19,5 +23,5 @@ export async function register(formData) {
     }
 
     revalidatePath('/', 'layout')
-    redirect('/account')
+    redirect('/')
 }
