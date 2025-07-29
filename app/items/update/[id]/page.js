@@ -1,4 +1,4 @@
-import MyPage from "./Mypage"
+import MyPage from "./actions"
 import { createClient } from "../../../utils/supabase/client"
 
 const getSingleItem = async(id) => {
