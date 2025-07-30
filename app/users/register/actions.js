@@ -1,27 +1,49 @@
-"use server"
+"use client"
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import { createClient } from '../../utils/supabase/server'
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "../../utils/supabase/client"
 
-export async function register(formData) {
-    const supabase = await createClient()
+const Register = () => {
+    const [name, setName] = useState("")
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-    const data = {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        options: {
-            data: {
-                full_name: formData.get('name')
+    const supabase = createClient()
+
+    const router = useRouter()
+
+    const register = async(e) => {
+        e.preventDefault()
+        const data = {
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: name
+                }
             }
         }
+        const { error } = await supabase.auth.signUp(data)
+        if (error) {
+            alert("ユーザー登録失敗")
+        }else{
+            router.push("/")
+            router.refresh()
+            alert("ユーザー登録成功")
+        }
     }
-
-    const { error } = await supabase.auth.signUp(data)
-    if (error) {
-        redirect('/error')
-    }
-
-    revalidatePath('/', 'layout')
-    redirect('/')
+    return (
+        <div>
+            <h1 className="page-title">登録ページ</h1>
+            <form onSubmit={register}>
+                <input value={name} onChange={(e) => setName(e.target.value)} type="text" name="name" placeholder="名前" required/>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" name="email" placeholder="Email" required/>
+                <input value={password} onChange={(e) => setPassword(e.target.value)} type="text" name="password" placeholder="パスワード" required/>
+                <button>登録</button>
+            </form>
+        </div>
+    )
 }
+
+export default Register
