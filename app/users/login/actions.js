@@ -1,25 +1,42 @@
-"use server"
+"use client"
 
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { createClient } from "../../utils/supabase/client"
 
-import { createClient } from '../../utils/supabase/server'
+const Login = () => {
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
 
-export async function login(formData) {
-    const supabase = await createClient()
+    const supabase = createClient()
 
-    const data = {
-        email: formData.get('email'),
-        password: formData.get('password')
+    const router = useRouter()
+
+    const login = async(e) => {
+        e.preventDefault()
+        const data = {
+            email: email,
+            password: password
+        }
+        const { error } = await supabase.auth.signInWithPassword(data)
+        if (error) {
+            alert("ログイン失敗")
+        }else{
+            router.push("/")
+            router.refresh()
+            alert("ログイン成功")
+        }
     }
-
-    const { error } = await supabase.auth.signInWithPassword(data)
-
-    if (error) {
-    
-        redirect('/error')
-    }
-
-    revalidatePath('/', 'layout')
-    redirect('/')
+    return (
+        <div>
+            <h1 className="page-title">ログインページ</h1>
+            <form onSubmit={login}>
+                <input value={email} onChange={(e) => setEmail(e.target.value)} type="text" name="email" placeholder="Email" required/>
+                <input value={password} onChange={(e) => setPassword(e.target.value)} type="text" name="password" placeholder="パスワード" required/>
+                <button>ログイン</button>
+            </form>
+        </div>
+    )
 }
+
+export default Login
