@@ -16,7 +16,7 @@ const CreateItem = () => {
 
         const {data: { user }} = await supabase.auth.getUser()
         const userEmail = user.email
-        const { data, error } = await supabase.from("all_items").insert({
+        const { error } = await supabase.from("all_items").insert({
             title: title, 
             price: price,
             image: image,

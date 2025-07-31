@@ -20,6 +20,7 @@ const Login = () => {
         }
         const { error } = await supabase.auth.signInWithPassword(data)
         if (error) {
+            console.log(error);
             alert("ログイン失敗")
         }else{
             router.push("/")

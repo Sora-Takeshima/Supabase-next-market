@@ -36,7 +36,7 @@ const UpdateItem = (context) => {
     const updateItem = async(e) => {
         e.preventDefault()
         const params = await context.params
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from("all_items")
             .update({
                 title: title, 

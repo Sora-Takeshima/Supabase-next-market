@@ -35,7 +35,7 @@ const DeleteItem = (context) => {
     const deleteItem = async(e) => {
         e.preventDefault()
         const params = await context.params
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from("all_items")
             .delete()
             .eq("id",`${params.id}` )
