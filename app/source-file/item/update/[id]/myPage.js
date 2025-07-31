@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import useAuth from "../../../utils/useAuth"
+import useAuth from "../../../useAuth"
 
 const UpdateItem = (context) => {
     const [title, setTitle] = useState("")
