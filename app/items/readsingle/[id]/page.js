@@ -4,8 +4,7 @@ import Link from "next/link"
 
 export async function generateMetadata(context){
     const params = await context.params
-    const singleItemArray = await getSingleItem(params.id)
-    const singleItem = singleItemArray[0]
+    const singleItem = await getSingleItem(params.id)
     return {
         title: singleItem.title,
         description: singleItem.description
@@ -18,13 +17,13 @@ const getSingleItem = async(id) => {
             .from("all_items")
             .select()
             .eq("id", `${id}`)
+            .single()
         return data
 }
 
 const ReadSingleItem = async(context) => {
     const params = await context.params
-    const singleItemArray = await getSingleItem(params.id)
-    const singleItem = singleItemArray[0]
+    const singleItem = await getSingleItem(params.id)
     return (
         <div className="grid-container-si">
             <div>
