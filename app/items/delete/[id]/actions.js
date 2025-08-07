@@ -5,10 +5,12 @@ import { useRouter } from "next/navigation"
 import { createClient } from "../../../utils/supabase/client"
 
 const DeleteItem = (context) => {
-    const [title, setTitle] = useState("")
-    const [price, setPrice] = useState("")
-    const [image, setImage] = useState("")
-    const [description, setDescription] = useState("")
+    const [formParams, setFormParams] = useState({
+        title: "",
+        price: "",
+        image: "",
+        description: ""
+    })
     const [loading, setLoading] = useState(false)
 
     const supabase = createClient()
@@ -22,11 +24,8 @@ const DeleteItem = (context) => {
                 .from("all_items")
                 .select()
                 .eq("id", `${params.id}`)
-            const singleItem = data[0] 
-            setTitle(singleItem.title)
-            setPrice(singleItem.price)
-            setImage(singleItem.image)
-            setDescription(singleItem.description)
+                .single()
+            setFormParams(data)
             setLoading(true)
         }
         getSingleItem()
@@ -38,7 +37,7 @@ const DeleteItem = (context) => {
         const { error } = await supabase
             .from("all_items")
             .delete()
-            .eq("id",`${params.id}` )
+            .eq("id", `${params.id}`)
         if (error) {
             alert("権限がありません")
         }else{
@@ -52,10 +51,10 @@ const DeleteItem = (context) => {
             <div>
                 <h1 className="page-title">アイテム削除</h1>
                 <form onSubmit={deleteItem}>
-                    <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" name="title" placeholder="アイテム名" required/>
-                    <input value={price} onChange={(e) => setPrice(e.target.value)} type="text" name="price" placeholder="価格" required/>
-                    <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="画像" required/>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="description" rows={15} placeholder="商品説明" required></textarea>
+                    <input value={formParams.title} type="text" name="title" disabled/>
+                    <input value={formParams.price} type="text" name="price" disabled/>
+                    <input value={formParams.image} type="text" name="image"  disabled/>
+                    <textarea value={formParams.description} name="description" rows={15} disabled></textarea>
                     <button>削除</button>
                 </form>
             </div>

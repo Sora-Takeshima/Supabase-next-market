@@ -6,11 +6,22 @@ import { createClient } from "../../../utils/supabase/client"
 import ImgInput from "../../../components/imgInput"
 
 const UpdateItem = (context) => {
-    const [title, setTitle] = useState("")
-    const [price, setPrice] = useState("")
-    const [image, setImage] = useState("")
-    const [description, setDescription] = useState("")
+    const [formParams, setFormParams] = useState({
+        title: "",
+        price: "",
+        image: "",
+        description: ""
+    })
     const [loading, setLoading] = useState(false)
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+        setFormParams((prev) => ({ ...prev, [name]: value }))
+    }
+
+    const handleImageChange = (imageUrl) => {
+        setFormParams((prev) => ({ ...prev, image: imageUrl }))
+    }
 
     const supabase = createClient()
 
@@ -23,11 +34,8 @@ const UpdateItem = (context) => {
                 .from("all_items")
                 .select()
                 .eq("id", `${params.id}`)
-            const singleItem = data[0] 
-            setTitle(singleItem.title)
-            setPrice(singleItem.price)
-            setImage(singleItem.image)
-            setDescription(singleItem.description)
+                .single()
+            setFormParams(data)
             setLoading(true)
         }
         getSingleItem()
@@ -35,14 +43,12 @@ const UpdateItem = (context) => {
 
     const updateItem = async(e) => {
         e.preventDefault()
+
         const params = await context.params
         const { error } = await supabase
             .from("all_items")
             .update({
-                title: title, 
-                price: price,
-                image: image,
-                description: description
+                ...formParams
             })
             .eq("id",`${params.id}` )
         if (error) {
@@ -53,16 +59,17 @@ const UpdateItem = (context) => {
             alert("アイテム編集成功")
         }
     }
+    
     if(loading){
         return (
             <div>
                 <h1 className="page-title">アイテム編集</h1>
-                <ImgInput setImage={setImage}/>
+                <ImgInput setImage={handleImageChange}/>
                 <form onSubmit={updateItem}>
-                    <input value={title} onChange={(e) => setTitle(e.target.value)} type="text" name="title" placeholder="アイテム名" required/>
-                    <input value={price} onChange={(e) => setPrice(e.target.value)} type="text" name="price" placeholder="価格" required/>
-                    <input value={image} onChange={(e) => setImage(e.target.value)} type="text" name="image" placeholder="画像" required/>
-                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} name="description" rows={15} placeholder="商品説明" required></textarea>
+                    <input value={formParams.title} onChange={handleChange} type="text" name="title" placeholder="アイテム名" required/>
+                    <input value={formParams.price} onChange={handleChange} type="text" name="price" placeholder="価格" required/>
+                    <input value={formParams.image} onChange={handleChange} type="text" name="image" placeholder="画像" required/>
+                    <textarea value={formParams.description} onChange={handleChange} name="description" rows={15} placeholder="商品説明" required></textarea>
                     <button>編集</button>
                 </form>
             </div>
